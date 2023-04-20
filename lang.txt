@@ -1,0 +1,71 @@
+1 ´Ê·¨
+	1.1 ´ÊÀà
+		TT_EOF			EOF
+		TT_IDENTIFIER	[a-zA-Z_][a-zA-Z0-9_]*
+		TT_NUMBER		('+'|'-')?[0-9]*('.')?[0-9_]*
+		TT_STRING		single_quote|double_quote (.)* single_quote|double_quote
+
+		TT_IS			:=
+		TT_COLON		:
+		TT_EQ			==
+		TT_NEQ			!=
+		TT_GE			>=
+		TT_GT			>
+		TT_LE			<=
+		TT_LT			<
+		TT_ADD			+
+		TT_MINUS		-
+		TT_MUL			*
+		TT_DIV			/
+		TT_AND			&&
+		TT_OR			||
+		TT_NOT			!
+
+		TT_COMMA		,
+		TT_LPAREN		(
+		TT_RPAREN		)
+		TT_LBRACE		{
+		TT_RBRACE		}
+
+		TT_DEF			def
+		TT_WHEN			when
+		TT_WHILE		while
+		TT_PARTIAL		partial
+		TT_RETURN		return
+		
+		TT_TRUE			true
+		TT_FALSE		false
+		TT_NIL			nil
+2 Óï·¨
+	line_comment ::= #(.)*(\r|\n|\r\n|\n\r)
+	block_comment ::= ##(.)*##
+
+	program ::= {statement}
+	block ::= "{" {statement} "}"
+	statement ::= assign_expr | def_stmt
+		| when_stmt | while_stmt | ret_stmt  | block | call_expr
+	assign_expr ::= <identifier> ":=" expr
+	def_stmt ::= "def" <identifier> [":" "partial"] ":=" expr
+	when_stmt ::= "when" expr block [block]
+	while_stmt ::= "while" expr block
+	ret_stmt ::= "return" expr|';'
+
+	func_expr ::= "[" id_list "]" ":" block
+	call_expr ::= "$" "(" expr arg_list ")"
+	id_list ::= [<identifier> {"," <identifier>}]
+	arg_list ::= [expr {"," expr}]
+
+	primary_expr ::= <value> | '(' part_expr ')' | func_expr | call_expr
+	part_expr ::= [unop] primary_expr {binop part_expr}
+	expr ::= part_expr
+
+3 Priorities:
+	() func_expr call_expr
+
+	R! -
+	L* /
+	L+ -
+	L>= > <= <
+	L== !=
+	L&&
+	L||
